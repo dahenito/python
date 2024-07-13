@@ -1,0 +1,54 @@
+#!/bin/bash
+
+set -euo pipefail
+
+function get_docker() {
+    echo "Docker is required. Please install docker and try again."
+    echo "https://docs.docker.com/get-docker/"
+    exit 1
+}
+
+function check_docker() {
+	command -v docker &>/dev/null || get_docker
+}
+
+#
+check_docker
+
+HOSTPWD=$PWD
+
+DIR="$(dirname "$(readlink -f "$0")")"
+
+cd "$DIR"
+
+source "./env"
+
+# 
+PIP_CACHE_DIR="$DOCKER_APP_PATH/cache/pip"
+CONDA_PKGS_DIRS="$DOCKER_APP_PATH/cache/conda/pkgs"
+mkdir -p "$PIP_CACHE_DIR"
+mkdir -p "$CONDA_PKGS_DIRS"
+
+#
+TAG="dockerapp/python-${USERNAME}"
+
+docker build \
+	--build-arg "VERSION=$VERSION" \
+	--build-arg "USERHOME=$USERHOME" \
+	--build-arg "USERNAME=$USERNAME" \
+	${DOCKER_BUILD_FLAGS:-} \
+	--tag "$TAG" \
+	--file Dockerfile.py .
+
+exec docker run \
+	--interactive \
+	--tty \
+	--rm \
+	--env "PIP_CACHE_DIR=$PIP_CACHE_DIR" \
+	--env "CONDA_PKGS_DIRS=$CONDA_PKGS_DIRS" \
+	--volume "$USERHOME:$USERHOME" \
+	--workdir "$HOSTPWD" \
+	${DOCKER_RUN_FLAGS:-} \
+	"$TAG" \
+	python "$@"
+

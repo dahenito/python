@@ -1,0 +1,9 @@
+export VERSION=3.12.4
+export DOCKER_APP_BASE=$HOME/.docker/app
+export DOCKER_APP_PATH=$HOME/.docker/app/pkg/python
+export HOSTOS=$(uname -s)
+export HOSTARCH=$(uname -m)
+export USERHOME=$HOME
+export USERNAME=$USER
+export USERID=$(id -u)
+export USERGID=$(id -g)
