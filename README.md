@@ -1,6 +1,12 @@
 # python
 
-This is a wrapper that starts python in a docker container.
+This app is a wrapper that starts [python](https://www.python.org/) in a docker container.
+
+To install using [docker app install](https://github.com/dahenito/docker).
+
+```bash
+docker app install https://github.com/dahenito/python.git
+```
 
 Your entire $HOME is mounted inside the container with the same layout so you can reference the files exactly the same way as if they were on the host.
 
